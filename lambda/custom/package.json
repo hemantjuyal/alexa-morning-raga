@@ -1,0 +1,20 @@
+{
+  "name": "Devotional Raga",
+  "version": "1.0.0",
+  "description": "devotional raga mantra - remastered version",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Hemant Juyal",
+  "license": "",
+  "dependencies": {
+    "ask-sdk": "^2.6.0",
+    "ask-sdk-core": "^2.0.0",
+    "ask-sdk-dynamodb-persistence-adapter": "^2.6.0",
+    "ask-sdk-model": "^1.0.0",
+    "i18next": "^15.0.4",
+    "i18next-sprintf-postprocessor": "^0.2.2",
+    "striptags": "^3.1.1"
+  }
+}

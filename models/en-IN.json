@@ -1,0 +1,252 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "devotional raga",
+            "intents": [
+                {
+                    "name": "FallbackIntent",
+                    "slots": [],
+                    "samples": [
+                        "I don't know"
+                    ]
+                },
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.NavigateHomeIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.MoreIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.NavigateSettingsIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.NextIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.PageUpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.PageDownIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.PreviousIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.ScrollRightIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.ScrollDownIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.ScrollLeftIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.ScrollUpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.PauseIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.ResumeIntent",
+                    "samples": []
+                },
+                {
+                    "name": "PlayPodcastEpisodeIntent",
+                    "slots": [
+                        {
+                            "name": "episode",
+                            "type": "episode_names"
+                        }
+                    ],
+                    "samples": [
+                        "{episode}",
+                        "I want to listen {episode}",
+                        "play {episode}",
+                        "start {episode}",
+                        "play episode {episode}",
+                        "episode {episode}",
+                        "start episode {episode}",
+                        "I want to listen episode {episode}",
+                        "episode {episode} play"
+                    ]
+                },
+                {
+                    "name": "WelcomeIntent",
+                    "slots": [],
+                    "samples": [
+                        "I want to listen mantra",
+                        "I want to listen om mantra",
+                        "I want to listen some mantra",
+                        "I want to listen relaxing mantra",
+                        "I want to listen relaxing devotion chants",
+                        "I want to listen devotion chants"
+                    ]
+                },
+                {
+                    "name": "AMAZON.YesIntent",
+                    "samples": [
+                        "yeah sure",
+                        "yeah",
+                        "sure",
+                        "yes",
+                        "ok"
+                    ]
+                },
+                {
+                    "name": "AMAZON.NoIntent",
+                    "samples": [
+                        "nah",
+                        "no",
+                        "nope"
+                    ]
+                },
+                {
+                    "name": "PlayPodcastEpisodeNumberIntent",
+                    "slots": [
+                        {
+                            "name": "episode_number",
+                            "type": "AMAZON.NUMBER"
+                        }
+                    ],
+                    "samples": [
+                        "{episode_number}",
+                        "I want to listen {episode_number}",
+                        "episode {episode_number}",
+                        "episode number {episode_number}",
+                        "play episode number {episode_number}",
+                        "start episode number {episode_number}",
+                        "I want to listen episode number {episode_number}",
+                        "number {episode_number}"
+                    ]
+                },
+                {
+                    "name": "PlayIntent",
+                    "slots": [],
+                    "samples": [
+                        "play",
+                        "yes play",
+                        "start please"
+                    ]
+                }
+            ],
+            "types": [
+                {
+                    "name": "episode_names",
+                    "values": [
+                        {
+                            "id": "1",
+                            "name": {
+                                "value": "om mantra",
+                                "synonyms": [
+                                    "om"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "2",
+                            "name": {
+                                "value": "buddha mantra",
+                                "synonyms": [
+                                    "buddha"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "3",
+                            "name": {
+                                "value": "durga mantra",
+                                "synonyms": [
+                                    "kaali",
+                                    "kali",
+                                    "durga"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "4",
+                            "name": {
+                                "value": "ganesha mantra",
+                                "synonyms": [
+                                    "ganesh",
+                                    "ganesha"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "5",
+                            "name": {
+                                "value": "gayatri mantra",
+                                "synonyms": [
+                                    "gayatri"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "6",
+                            "name": {
+                                "value": "shiv mantra",
+                                "synonyms": [
+                                    "shiv",
+                                    "shankar",
+                                    "shiva"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "7",
+                            "name": {
+                                "value": "krishna mantra",
+                                "synonyms": [
+                                    "krishna"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "8",
+                            "name": {
+                                "value": "om mantra remix",
+                                "synonyms": [
+                                    "om remix"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "9",
+                            "name": {
+                                "value": "ganesha mantra remix",
+                                "synonyms": [
+                                    "ganesh remix",
+                                    "ganesha remix"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}
