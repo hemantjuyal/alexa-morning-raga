@@ -87,9 +87,9 @@
                         "I want to listen {episode}",
                         "play {episode}",
                         "start {episode}",
+                        "start episode {episode}",
                         "play episode {episode}",
                         "episode {episode}",
-                        "start episode {episode}",
                         "I want to listen episode {episode}",
                         "episode {episode} play"
                     ]
@@ -148,9 +148,14 @@
                     "slots": [],
                     "samples": [
                         "play",
+                        "play mantra",
                         "yes play",
                         "start please"
                     ]
+                },
+                {
+                    "name": "AMAZON.RepeatIntent",
+                    "samples": []
                 }
             ],
             "types": [
@@ -210,6 +215,7 @@
                             "name": {
                                 "value": "shiv mantra",
                                 "synonyms": [
+                                    "shiva mantra",
                                     "shiv",
                                     "shankar",
                                     "shiva"
@@ -221,6 +227,8 @@
                             "name": {
                                 "value": "krishna mantra",
                                 "synonyms": [
+                                    "govinda mantra",
+                                    "govinda",
                                     "krishna"
                                 ]
                             }
@@ -241,6 +249,37 @@
                                 "synonyms": [
                                     "ganesh remix",
                                     "ganesha remix"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "10",
+                            "name": {
+                                "value": "sai mantra",
+                                "synonyms": [
+                                    "sai baba mantra",
+                                    "sai baba"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "11",
+                            "name": {
+                                "value": "vishnu mantra",
+                                "synonyms": [
+                                    "vishnu sahasranamam mantra",
+                                    "narayana mantra",
+                                    "narayan mantra",
+                                    "vishnu sahasranamam"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "12",
+                            "name": {
+                                "value": "buddha tibetan mantra",
+                                "synonyms": [
+                                    "tibetan buddha "
                                 ]
                             }
                         }
