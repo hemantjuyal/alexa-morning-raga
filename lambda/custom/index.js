@@ -89,11 +89,18 @@ const WelcomeHandler = {
       return controller.playfirst(handlerInput);
     } else {
       playbackInfo.inPlaybackSession = false;
-      speakOutput = requestAttributes.t('WELCOME_MESSAGE_REPEAT', `${podcasts.podcastEpisodeDetails.episodes[playbackInfo.playOrder[playbackInfo.index]].title}`);
+      // speakOutput = requestAttributes.t('WELCOME_MESSAGE_REPEAT',
+      //   `${podcasts.podcastEpisodeDetails.episodes[playbackInfo.playOrder[playbackInfo.index]].title}`);
+      speakOutput = requestAttributes.t('WELCOME_MESSAGE_REPEAT',
+        getPodcastEpisodeDetails(podcasts.podcastEpisodes.episodes[playbackInfo.playOrder[playbackInfo.index]]).episode_details.title);
+
       repromptOutput = requestAttributes.t('WELCOME_MESSAGE_REPEAT_REPROMPT');
       displayData = {
         title: requestAttributes.t('WELCOME_MESSAGE_REPEAT_DISPLAY_TITLE', requestAttributes.t('SKILL_NAME_DISPLAY')),
-        primaryText: requestAttributes.t('WELCOME_MESSAGE_REPEAT_DISPLAY_BODY', `${podcasts.podcastEpisodeDetails.episodes[playbackInfo.playOrder[playbackInfo.index]].title}`),
+        // primaryText: requestAttributes.t('WELCOME_MESSAGE_REPEAT_DISPLAY_BODY',
+        //   `${podcasts.podcastEpisodeDetails.episodes[playbackInfo.playOrder[playbackInfo.index]].title}`),
+        primaryText: requestAttributes.t('WELCOME_MESSAGE_REPEAT_DISPLAY_BODY',
+          getPodcastEpisodeDetails(podcasts.podcastEpisodes.episodes[playbackInfo.playOrder[playbackInfo.index]]).episode_details.title),
         secondaryText: requestAttributes.t('WELCOME_MESSAGE_REPEAT_DISPLAY_BODY_CONTENT'),
         tertiaryText: null,
         imageUrl: BRAND_LOGO,
@@ -354,20 +361,19 @@ const AudioPlayerEventHandler = {
         if (playbackInfo.nextStreamEnqueued) {
           break;
         }
-
         // const enqueueIndex = (playbackInfo.index + 1) % constants.audioData.length;
-        const enqueueIndex = (playbackInfo.index + 1) % podcasts.podcastEpisodeDetails.episodes.length;
-
+        // const enqueueIndex = (playbackInfo.index + 1) % podcasts.podcastEpisodeDetails.episodes.length;
+        const enqueueIndex = (playbackInfo.index + 1) % podcasts.podcastEpisodes.episodes.length;
         if (enqueueIndex === 0 && !playbackSetting.loop) {
           break;
         }
-
         playbackInfo.nextStreamEnqueued = true;
 
         const enqueueToken = playbackInfo.playOrder[enqueueIndex];
         const playBehavior = 'ENQUEUE';
         // const podcast = constants.audioData[playbackInfo.playOrder[enqueueIndex]];
-        const podcast = podcasts.podcastEpisodeDetails.episodes[playbackInfo.playOrder[enqueueIndex]];
+        // const podcast = podcasts.podcastEpisodeDetails.episodes[playbackInfo.playOrder[enqueueIndex]];
+        const podcast = getPodcastEpisodeDetails(podcasts.podcastEpisodes.episodes[playbackInfo.playOrder[enqueueIndex]]).episode_details;
         const expectedPreviousToken = playbackInfo.token;
         const offsetInMilliseconds = 0;
         console.log('episode url ', podcast.url + podcasts.podcastEpisodes.param);
@@ -429,9 +435,11 @@ const NextPlaybackHandler = {
     const playbackInfo = await getPlaybackInfo(handlerInput);
     const request = handlerInput.requestEnvelope.request;
     console.log('inPlaybackSession', playbackInfo.inPlaybackSession);
-    return playbackInfo.inPlaybackSession &&
+    /*return playbackInfo.inPlaybackSession &&
       (request.type === 'PlaybackController.NextCommandIssued' ||
-        (request.type === 'IntentRequest' && request.intent.name === 'AMAZON.NextIntent'));
+        (request.type === 'IntentRequest' && request.intent.name === 'AMAZON.NextIntent'));*/
+    return (request.type === 'PlaybackController.NextCommandIssued' ||
+      (request.type === 'IntentRequest' && request.intent.name === 'AMAZON.NextIntent'));
   },
   handle(handlerInput) {
     console.log('NextPlaybackHandler called');
@@ -445,9 +453,11 @@ const PreviousPlaybackHandler = {
     const playbackInfo = await getPlaybackInfo(handlerInput);
     const request = handlerInput.requestEnvelope.request;
     console.log('inPlaybackSession', playbackInfo.inPlaybackSession);
-    return playbackInfo.inPlaybackSession &&
+    /*return playbackInfo.inPlaybackSession &&
       (request.type === 'PlaybackController.PreviousCommandIssued' ||
-        (request.type === 'IntentRequest' && request.intent.name === 'AMAZON.PreviousIntent'));
+        (request.type === 'IntentRequest' && request.intent.name === 'AMAZON.PreviousIntent'));*/
+    return (request.type === 'PlaybackController.PreviousCommandIssued' ||
+      (request.type === 'IntentRequest' && request.intent.name === 'AMAZON.PreviousIntent'));
   },
   handle(handlerInput) {
     console.log('PreviousPlaybackHandler called');
@@ -486,8 +496,10 @@ const LoopOnHandler = {
   },
   async handle(handlerInput) {
     console.log('LoopOnHandler called');
-
-    const playbackSetting = await handlerInput.attributesManager.getPersistentAttributes().playbackSetting;
+    const {
+      playbackInfo,
+      playbackSetting,
+    } = await handlerInput.attributesManager.getPersistentAttributes();
     playbackSetting.loop = true;
 
     return handlerInput.responseBuilder
@@ -508,8 +520,10 @@ const LoopOffHandler = {
   },
   async handle(handlerInput) {
     console.log('LoopOffHandler called');
-    const playbackSetting = await handlerInput.attributesManager.getPersistentAttributes().playbackSetting;
-
+    const {
+      playbackInfo,
+      playbackSetting,
+    } = await handlerInput.attributesManager.getPersistentAttributes();
     playbackSetting.loop = false;
 
     return handlerInput.responseBuilder
@@ -584,7 +598,7 @@ const StartOverHandler = {
   },
   async handle(handlerInput) {
     console.log('StartOverHandler called');
-    const playbackInfo = await handlerInput.attributesManager.getPersistentAttributes().playbackInfo;
+    const playbackInfo = await getPlaybackInfo(handlerInput);
     playbackInfo.offsetInMilliseconds = 0;
     return controller.play(handlerInput);
   },
@@ -699,6 +713,21 @@ const ResumeHandler = {
 }; // end resume handler
 
 
+const RepeatHandler = {
+  canHandle(handlerInput) {
+    const request = handlerInput.requestEnvelope.request;
+    return request.type === 'IntentRequest' &&
+      request.intent.name === 'AMAZON.RepeatIntent';
+  },
+  async handle(handlerInput) {
+    console.log('RepeatHandler called');
+    const requestAttributes = handlerInput.attributesManager.getRequestAttributes();
+    const playbackInfo = await getPlaybackInfo(handlerInput);
+    playbackInfo.offsetInMilliseconds = 0;
+    return controller.play(handlerInput);
+  },
+}; // end resume handler
+
 
 const SystemExceptionHandler = {
   canHandle(handlerInput) {
@@ -727,16 +756,15 @@ const SessionEndedRequestHandler = {
 
 
 const ErrorHandler = {
-  canHandle(handlerInput) {
+  canHandle() {
     return true;
   },
   handle(handlerInput, error) {
     console.log('ErrorHandler called');
     console.log(`Error handled: ${error.message}`);
     console.log(`Error stack: ${error.stack}`);
-    const requestAttributes = handlerInput.attributesManager.getRequestAttributes();
     return handlerInput.responseBuilder
-      .speak(requestAttributes.t('ERROR_MESSAGE'))
+      .speak('माफ़ कीजिए, मुझे कुछ दिक़्क़तों का सामना करना पड़ रहा है. कुछ देर बाद try कीजिए')
       .getResponse();
   },
 }; // end error handler
@@ -1024,7 +1052,8 @@ const controller = {
 
     const playBehavior = 'REPLACE_ALL';
     // const podcast = constants.audioData[playOrder[index]];
-    const podcast = podcasts.podcastEpisodeDetails.episodes[playOrder[index]];
+    // const podcast = podcasts.podcastEpisodeDetails.episodes[playOrder[index]];
+    const podcast = getPodcastEpisodeDetails(podcasts.podcastEpisodes.episodes[playOrder[index]]).episode_details;
     const token = playOrder[index];
     console.log('token', index);
     console.log('episode url ', podcast.url + podcasts.podcastEpisodes.param);
@@ -1075,7 +1104,8 @@ const controller = {
 
     const playBehavior = 'REPLACE_ALL';
     // const podcast = constants.audioData[playOrder[index]];
-    const podcast = podcasts.podcastEpisodeDetails.episodes[playOrder[index]];
+    // const podcast = podcasts.podcastEpisodeDetails.episodes[playOrder[index]];
+    const podcast = getPodcastEpisodeDetails(podcasts.podcastEpisodes.episodes[playOrder[index]]).episode_details;
     const token = playOrder[index];
     console.log('token', index);
     playbackInfo.nextStreamEnqueued = false;
@@ -1152,7 +1182,8 @@ const controller = {
 
     const playBehavior = 'REPLACE_ALL';
     // const podcast = constants.audioData[playOrder[index]];
-    const podcast = podcasts.podcastEpisodeDetails.episodes[playOrder[index]];
+    // const podcast = podcasts.podcastEpisodeDetails.episodes[playOrder[index]];
+    const podcast = getPodcastEpisodeDetails(podcasts.podcastEpisodes.episodes[playOrder[index]]).episode_details;
     const token = playOrder[index];
     console.log('token', index);
     playbackInfo.nextStreamEnqueued = false;
@@ -1201,8 +1232,8 @@ const controller = {
     } = await handlerInput.attributesManager.getPersistentAttributes();
     const requestAttributes = handlerInput.attributesManager.getRequestAttributes();
     // const nextIndex = (playbackInfo.index + 1) % constants.audioData.length;
-    const nextIndex = (playbackInfo.index + 1) % podcasts.podcastEpisodeDetails.episodes.length;
-
+    // const nextIndex = (playbackInfo.index + 1) % podcasts.podcastEpisodeDetails.episodes.length;
+    const nextIndex = (playbackInfo.index + 1) % podcasts.podcastEpisodes.episodes.length;
     console.log('nextIndex ', nextIndex)
     if (nextIndex === 0 && !playbackSetting.loop) {
       return handlerInput.responseBuilder
@@ -1229,7 +1260,8 @@ const controller = {
     if (previousIndex === -1) {
       if (playbackSetting.loop) {
         // previousIndex += constants.audioData.length;
-        previousIndex += podcasts.podcastEpisodeDetails.episodes.length;
+        // previousIndex += podcasts.podcastEpisodeDetails.episodes.length;
+        previousIndex += podcasts.podcastEpisodes.episodes.length;
       } else {
         return handlerInput.responseBuilder
           .addAudioPlayerStopDirective()
@@ -1294,12 +1326,23 @@ function getPodcastId() {
 }; // end getPodcastId
 
 
-function getPodcastEpisodeId(episodeNumber) {
-  console.log('getPodcastEpisodeNumber called');
-  console.log('episodeNumber', episodeNumber);
+function getPodcastEpisodeIndex(episodeId) {
+  if (parseInt(episodeId)) {
+    for (var i = 0; i < podcasts.podcastEpisodes.episodes.length; i++) {
+      if (episodeId == podcasts.podcastEpisodes.episodes[i]) {
+        return i;
+      }
+    }
+  } else {
+    return null;
+  }
 
+}; //end getPodcastEpisodeIndex
+
+
+function getPodcastEpisodeId(episodeNumber) {
   if (parseInt(episodeNumber)) {
-    return podcasts.podcastEpisodeDetails.episodes[episodeNumber - 1].id;
+    return podcasts.podcastEpisodes.episodes[episodeNumber - 1];
   } else {
     return null;
   }
@@ -1310,16 +1353,17 @@ function getPodcastEpisodeId(episodeNumber) {
 function getPodcastEpisodeDetails(episodeId) {
   console.log('getPodcastEpisodeDetails called');
   console.log('episodeId', episodeId);
-  let episode = {};
+  let episode = {},
+    episode_index;
 
   if (episodeId) {
     for (var j = 0; j < podcasts.podcastEpisodeDetails.episodes.length; j++) {
       if (episodeId == podcasts.podcastEpisodeDetails.episodes[j].id) {
-        console.log('episode id exists!!');
+        episode_index = getPodcastEpisodeIndex(episodeId);
         episode = {
-          'episode': podcasts.podcastEpisodeDetails.episodes[j],
-          'id': podcasts.podcastEpisodeDetails.episodes[j].id,
-          'index': j
+          episode_details: podcasts.podcastEpisodeDetails.episodes[j],
+          id: podcasts.podcastEpisodeDetails.episodes[j].id,
+          index: episode_index
         };
         return episode;
       }
@@ -1333,26 +1377,24 @@ function getPodcastEpisodeDetails(episodeId) {
 
 function getPodcastEpisodeList() {
   console.log('getPodcastEpisodeList called');
-  let episodeNames = [];
+  let episodeNames = [],
+    index;
 
   for (var k = 0; k < podcasts.podcastEpisodeDetails.episodes.length; k++) {
     for (var j = 0; j < podcasts.podcastEpisodes.episodes.length; j++) {
       if (podcasts.podcastEpisodes.episodes[j] === podcasts.podcastEpisodeDetails.episodes[k].id) {
-        episodeNames.push({
+        index = getPodcastEpisodeIndex(podcasts.podcastEpisodes.episodes[j]);
+        episodeNames[index] = {
           id: podcasts.podcastEpisodeDetails.episodes[k].id,
           token: 'PlayPodcastEpisodeIntent' + '_' + podcasts.podcastEpisodeDetails.episodes[k].id,
           image: podcasts.podcastEpisodeDetails.episodes[k].image,
           primaryText: podcasts.podcastEpisodeDetails.episodes[k].title,
           secondaryText: null,
           tertiaryText: null
-        });
+        };
       }
     }
   }
-
-  episodeNames.sort(function(a, b) {
-    return a.id - b.id;
-  });
 
   return episodeNames;
 }; //end getPodcastEpisodeList
@@ -1421,6 +1463,7 @@ exports.handler = skillBuilder
     PlayPodcastEpisodeHandler,
     PlayPodcastEposideNumberHandler,
     ResumeHandler,
+    RepeatHandler,
     ExitHandler,
     AudioPlayerEventHandler,
     ElementSelectedHandler,
