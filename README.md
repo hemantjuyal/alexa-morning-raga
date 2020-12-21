@@ -1,7 +1,3 @@
-
-# alexa-morning-raga
-alexa skill for daily morning mantra
-
 # Devotional Raga is an Alexa Skill having daily devotional mantra. This action supports all Alexa Echo series devices including smart displays. Available 
 
 ## Project Structure</b>
