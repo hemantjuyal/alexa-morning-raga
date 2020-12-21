@@ -1,4 +1,4 @@
-# Devotional Raga is an Alexa Skill having daily devotional mantra. This action supports all Alexa Echo series devices including smart displays. Available 
+# Devotional Raga is an Alexa Skill having daily devotional mantra. This skill supports all Alexa Echo series devices including smart displays. Available 
 
 ## Project Structure</b>
 
