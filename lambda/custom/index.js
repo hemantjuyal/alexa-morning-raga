@@ -472,8 +472,7 @@ const PausePlaybackHandler = {
     const playbackInfo = await getPlaybackInfo(handlerInput);
     const request = handlerInput.requestEnvelope.request;
     console.log('inPlaybackSession', playbackInfo.inPlaybackSession);
-    return playbackInfo.inPlaybackSession &&
-      request.type === 'IntentRequest' &&
+    return request.type === 'IntentRequest' &&
       (request.intent.name === 'AMAZON.StopIntent' ||
         request.intent.name === 'AMAZON.CancelIntent' ||
         request.intent.name === 'AMAZON.PauseIntent');
